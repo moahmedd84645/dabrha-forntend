@@ -1,5 +1,4 @@
 // app.js (النسخة النهائية الصحيحة والمُنقحة)
-
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = 'https://dabarha.pythonanywhere.com/api';
     const state = {
@@ -8,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
         editingTransactionId: null
     };
 
-    // ... (بقية الكود من هنا هو نفسه الكود الصحيح السابق) ...
     const authScreen = document.getElementById('auth-screen');
     const mainScreen = document.getElementById('main-screen');
     const loginForm = document.getElementById('login-form');
@@ -234,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             let response;
             if (state.editingTransactionId) {
-                // This endpoint does not exist in the provided backend code, it should be updated
+                // The backend does not support PUT /transactions/:id, this will fail
                 response = await fetch(`${API_URL}/transactions/${state.editingTransactionId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -305,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
        if (state.editingTransactionId && confirm('هل أنت متأكد من حذف هذه العملية؟')) {
            showLoader();
            try {
-                // This endpoint does not exist in the provided backend code, it should be updated
+                // The backend does not support DELETE /transactions/:id, this will fail
                 const response = await fetch(`${API_URL}/transactions/${state.editingTransactionId}`, { method: 'DELETE' });
                 if (!response.ok) throw new Error('فشل الحذف');
                 await fetchTransactions();
@@ -323,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
+            navigator.serviceWorker.register('./service-worker.js')
                 .then(reg => console.log('Service Worker مسجل:', reg))
                 .catch(err => console.log('فشل تسجيل Service Worker:', err));
         });
