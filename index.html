@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دبّرها</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4A90E2"/>
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+    <div id="app-container">
+        <div id="auth-screen" class="screen active">
+            <div class="auth-container">
+                <form id="login-form" class="auth-form ">
+                    <i class="fa-solid fa-wallet auth-icon"></i>
+                    <h2>تسجيل الدخول إلى دبّرها</h2>
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="login-email" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="login-password" placeholder="كلمة المرور" required>
+                    </div>
+                    <button type="submit">دخول</button>
+                    <p class="auth-switch">ليس لديك حساب؟ <a href="#" id="show-register">أنشئ حسابًا</a></p>
+                </form>
+                <form id="register-form" class="auth-form hidden">
+                    <i class="fa-solid fa-user-plus auth-icon"></i>
+                    <h2>إنشاء حساب جديد</h2>
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="register-email" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="register-password" placeholder="كلمة المرور" required>
+                    </div>
+                    <button type="submit">إنشاء حساب</button>
+                    <p class="auth-switch">لديك حساب بالفعل؟ <a href="#" id="show-login">سجل الدخول</a></p>
+                </form>
+            </div>
+        </div>
+
+        <div id="main-screen" class="screen hidden">
+            <header>
+                <h1>دبّرها</h1>
+                <button id="logout-button" title="تسجيل الخروج"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </header>
+            <main>
+                <div id="summary-card" class="card">
+                    <p>رصيدك الحالي</p>
+                    <h2 id="balance-amount">0.00 جنيه</h2>
+                    <div class="summary-details">
+                        <div>
+                            <p><i class="fa-solid fa-arrow-down"></i> إجمالي الدخل</p>
+                            <span id="total-income">0.00</span>
+                        </div>
+                        <div>
+                            <p><i class="fa-solid fa-arrow-up"></i> إجمالي المصروفات</p>
+                            <span id="total-expenses">0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="transactions-header">
+                    <h3>آخر العمليات</h3>
+                </div>
+                <div id="transactions-list" class="card">
+                    </div>
+            </main>
+            <button id="add-transaction-btn" class="fab"><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <div id="transaction-modal" class="modal-container hidden">
+            <div class="modal-content">
+                <form id="transaction-form">
+                    <div class="modal-header">
+                       <h3 id="modal-title">إضافة عملية جديدة</h3>
+                       <button type="button" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="toggle-buttons">
+                        <button type="button" id="type-expense" class="toggle-btn active" data-type="expense">مصروف</button>
+                        <button type="button" id="type-income" class="toggle-btn" data-type="income">دخل</button>
+                    </div>
+                    <input type="number" id="amount" placeholder="المبلغ" step="0.01" required>
+                    <input type="text" id="category" placeholder="التصنيف" required>
+                    <textarea id="notes" placeholder="ملاحظات (اختياري)"></textarea>
+                    <div class="modal-actions">
+                        <button type="submit" id="save-btn" class="btn-primary">حفظ</button>
+                        <button type="button" id="delete-btn" class="btn-danger hidden">حذف</button>
+                        <button type="button" id="cancel-btn" class="btn-secondary">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loader" class="hidden"><div class="spinner"></div></div>
+    <div id="toast" class=""></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
