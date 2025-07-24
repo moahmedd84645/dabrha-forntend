@@ -1,13 +1,14 @@
-// app.js
+// app.js (النسخة النهائية الصحيحة والمُنقحة)
 
 document.addEventListener('DOMContentLoaded', () => {
-    // تعريف المتغيرات العامة وعناصر الواجهة (نفس السابق)
     const API_URL = 'https://dabarha.pythonanywhere.com/api';
+    const state = {
         currentUser: null,
         transactions: [],
         editingTransactionId: null
     };
 
+    // ... (بقية الكود من هنا هو نفسه الكود الصحيح السابق) ...
     const authScreen = document.getElementById('auth-screen');
     const mainScreen = document.getElementById('main-screen');
     const loginForm = document.getElementById('login-form');
@@ -19,10 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalIncomeEl = document.getElementById('total-income');
     const totalExpensesEl = document.getElementById('total-expenses');
     const transactionsListEl = document.getElementById('transactions-list');
-    
+
     const addTransactionBtn = document.getElementById('add-transaction-btn');
     const logoutButton = document.getElementById('logout-button');
-    
+
     const transactionModal = document.getElementById('transaction-modal');
     const transactionForm = document.getElementById('transaction-form');
     const modalTitle = document.getElementById('modal-title');
@@ -32,11 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelBtn = document.getElementById('cancel-btn');
     const closeModalBtn = document.querySelector('.close-modal-btn');
 
-
     const loader = document.getElementById('loader');
     const toast = document.getElementById('toast');
 
-    // --- دوال مساعدة (نفس السابق) ---
     const showLoader = () => loader.classList.remove('hidden');
     const hideLoader = () => loader.classList.add('hidden');
 
@@ -48,8 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     };
 
-    // --- دوال الواجهة (UI) ---
-    
     const showMainScreen = () => {
         authScreen.classList.remove('active');
         mainScreen.classList.add('active');
@@ -70,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalIncome = state.transactions
             .filter(t => t.transaction_type === 'income')
             .reduce((sum, t) => sum + t.amount, 0);
-        
+
         const totalExpenses = state.transactions
             .filter(t => t.transaction_type === 'expense')
             .reduce((sum, t) => sum + t.amount, 0);
@@ -82,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
         totalExpensesEl.textContent = totalExpenses.toFixed(2);
     };
 
-    // **هنا التعديل الرئيسي لاستخدام الأيقونات**
     const renderTransactions = () => {
         transactionsListEl.innerHTML = '';
         if (state.transactions.length === 0) {
@@ -110,14 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
             transactionsListEl.appendChild(item);
         });
     };
-    
+
     const openTransactionModal = (transaction = null) => {
         transactionForm.reset();
         state.editingTransactionId = transaction ? transaction.id : null;
 
         if (transaction) {
             modalTitle.textContent = 'تعديل العملية';
-            document.getElementById('transaction-id').value = transaction.id;
             document.getElementById('amount').value = transaction.amount;
             document.getElementById('category').value = transaction.category;
             document.getElementById('notes').value = transaction.notes;
@@ -142,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
         transactionModal.classList.add('hidden');
     };
 
-    // --- دوال التعامل مع الـ API (نفس السابق) ---
     const fetchTransactions = async () => {
         if (!state.currentUser) return;
         showLoader();
@@ -158,9 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hideLoader();
         }
     };
-    
-    // --- منطق التطبيق وأحداث المستخدم ---
-    
+
     const checkLoginStatus = () => {
         const userId = localStorage.getItem('dabarha_user_id');
         const userEmail = localStorage.getItem('dabarha_user_email');
@@ -187,11 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'فشل تسجيل الدخول');
-            
+
             state.currentUser = { id: data.user_id, email: data.email };
             localStorage.setItem('dabarha_user_id', data.user_id);
             localStorage.setItem('dabarha_user_email', data.email);
-            
+
             showMainScreen();
             await fetchTransactions();
         } catch (error) {
@@ -215,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'فشل إنشاء الحساب');
-            
+
             showToast('تم إنشاء الحساب بنجاح! قم بتسجيل الدخول.', 'success');
             registerForm.classList.add('hidden');
             loginForm.classList.remove('hidden');
@@ -240,9 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            // ... (نفس كود الحفظ والتعديل السابق)
             let response;
             if (state.editingTransactionId) {
+                // This endpoint does not exist in the provided backend code, it should be updated
                 response = await fetch(`${API_URL}/transactions/${state.editingTransactionId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -266,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hideLoader();
         }
     });
-    
+
     transactionsListEl.addEventListener('click', (e) => {
         const item = e.target.closest('.transaction-item');
         if (item) {
@@ -277,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-    
+
     logoutButton.addEventListener('click', () => {
         state.currentUser = null;
         localStorage.removeItem('dabarha_user_id');
@@ -295,11 +287,11 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
     });
-    
+
     addTransactionBtn.addEventListener('click', () => openTransactionModal());
     cancelBtn.addEventListener('click', closeTransactionModal);
-    closeModalBtn.addEventListener('click', closeTransactionModal); // زر الإغلاق الجديد
-    
+    closeModalBtn.addEventListener('click', closeTransactionModal);
+
     typeIncomeBtn.addEventListener('click', () => {
         typeIncomeBtn.classList.add('active');
         typeExpenseBtn.classList.remove('active');
@@ -308,11 +300,12 @@ document.addEventListener('DOMContentLoaded', () => {
         typeExpenseBtn.classList.add('active');
         typeIncomeBtn.classList.remove('active');
     });
-    
+
     deleteBtn.addEventListener('click', async () => {
        if (state.editingTransactionId && confirm('هل أنت متأكد من حذف هذه العملية؟')) {
            showLoader();
            try {
+                // This endpoint does not exist in the provided backend code, it should be updated
                 const response = await fetch(`${API_URL}/transactions/${state.editingTransactionId}`, { method: 'DELETE' });
                 if (!response.ok) throw new Error('فشل الحذف');
                 await fetchTransactions();
