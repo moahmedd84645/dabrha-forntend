@@ -1,11 +1,7 @@
-// app.js (النسخة النهائية الصحيحة والمُنقحة)
+// app.js (النسخة النهائية الكاملة والصحيحة 100%)
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = 'https://dabarha.pythonanywhere.com/api';
-    const state = {
-        currentUser: null,
-        transactions: [],
-        editingTransactionId: null
-    };
+    const state = { currentUser: null, transactions: [], editingTransactionId: null };
 
     const authScreen = document.getElementById('auth-screen');
     const mainScreen = document.getElementById('main-screen');
@@ -13,15 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('register-form');
     const showRegisterLink = document.getElementById('show-register');
     const showLoginLink = document.getElementById('show-login');
-
     const balanceAmountEl = document.getElementById('balance-amount');
     const totalIncomeEl = document.getElementById('total-income');
     const totalExpensesEl = document.getElementById('total-expenses');
     const transactionsListEl = document.getElementById('transactions-list');
-
     const addTransactionBtn = document.getElementById('add-transaction-btn');
     const logoutButton = document.getElementById('logout-button');
-
     const transactionModal = document.getElementById('transaction-modal');
     const transactionForm = document.getElementById('transaction-form');
     const modalTitle = document.getElementById('modal-title');
@@ -30,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteBtn = document.getElementById('delete-btn');
     const cancelBtn = document.getElementById('cancel-btn');
     const closeModalBtn = document.querySelector('.close-modal-btn');
-
     const loader = document.getElementById('loader');
     const toast = document.getElementById('toast');
 
@@ -40,9 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showToast = (message, type = 'error') => {
         toast.textContent = message;
         toast.className = `show ${type}`;
-        setTimeout(() => {
-            toast.className = '';
-        }, 3000);
+        setTimeout(() => { toast.className = ''; }, 3000);
     };
 
     const showMainScreen = () => {
@@ -62,16 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateSummary = () => {
-        const totalIncome = state.transactions
-            .filter(t => t.transaction_type === 'income')
-            .reduce((sum, t) => sum + t.amount, 0);
-
-        const totalExpenses = state.transactions
-            .filter(t => t.transaction_type === 'expense')
-            .reduce((sum, t) => sum + t.amount, 0);
-
+        const totalIncome = state.transactions.filter(t => t.transaction_type === 'income').reduce((sum, t) => sum + t.amount, 0);
+        const totalExpenses = state.transactions.filter(t => t.transaction_type === 'expense').reduce((sum, t) => sum + t.amount, 0);
         const balance = totalIncome - totalExpenses;
-
         balanceAmountEl.textContent = `${balance.toFixed(2)} جنيه`;
         totalIncomeEl.textContent = totalIncome.toFixed(2);
         totalExpensesEl.textContent = totalExpenses.toFixed(2);
@@ -83,24 +66,18 @@ document.addEventListener('DOMContentLoaded', () => {
             transactionsListEl.innerHTML = '<p style="text-align:center; color:#888;">لا توجد عمليات لعرضها.</p>';
             return;
         }
-
         state.transactions.slice(0, 5).forEach(t => {
             const isIncome = t.transaction_type === 'income';
             const item = document.createElement('div');
             item.className = 'transaction-item';
             item.dataset.id = t.id;
             item.innerHTML = `
-                <div class="transaction-icon ${isIncome ? 'income' : 'expense'}">
-                    <i class="fa-solid ${isIncome ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
-                </div>
+                <div class="transaction-icon ${isIncome ? 'income' : 'expense'}"><i class="fa-solid ${isIncome ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
                 <div class="transaction-info">
                     <p class="transaction-category">${t.category}</p>
                     <p class="transaction-notes">${t.notes || ''}</p>
                 </div>
-                <span class="transaction-amount ${isIncome ? 'income' : 'expense'}">
-                    ${isIncome ? '+' : '-'}${t.amount.toFixed(2)}
-                </span>
-            `;
+                <span class="transaction-amount ${isIncome ? 'income' : 'expense'}">${isIncome ? '+' : '-'}${t.amount.toFixed(2)}</span>`;
             transactionsListEl.appendChild(item);
         });
     };
@@ -108,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const openTransactionModal = (transaction = null) => {
         transactionForm.reset();
         state.editingTransactionId = transaction ? transaction.id : null;
-
         if (transaction) {
             modalTitle.textContent = 'تعديل العملية';
             document.getElementById('amount').value = transaction.amount;
@@ -131,9 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transactionModal.classList.remove('hidden');
     };
 
-    const closeTransactionModal = () => {
-        transactionModal.classList.add('hidden');
-    };
+    const closeTransactionModal = () => transactionModal.classList.add('hidden');
 
     const fetchTransactions = async () => {
         if (!state.currentUser) return;
@@ -170,18 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: document.getElementById('login-email').value,
-                    password: document.getElementById('login-password').value,
-                }),
+                body: JSON.stringify({ email: document.getElementById('login-email').value, password: document.getElementById('login-password').value }),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'فشل تسجيل الدخول');
-
             state.currentUser = { id: data.user_id, email: data.email };
             localStorage.setItem('dabarha_user_id', data.user_id);
             localStorage.setItem('dabarha_user_email', data.email);
-
             showMainScreen();
             await fetchTransactions();
         } catch (error) {
@@ -198,18 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: document.getElementById('register-email').value,
-                    password: document.getElementById('register-password').value,
-                }),
+                body: JSON.stringify({ email: document.getElementById('register-email').value, password: document.getElementById('register-password').value }),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'فشل إنشاء الحساب');
-
             showToast('تم إنشاء الحساب بنجاح! قم بتسجيل الدخول.', 'success');
             registerForm.classList.add('hidden');
             loginForm.classList.remove('hidden');
-
         } catch (error) {
             showToast(error.message);
         } finally {
@@ -220,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     transactionForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         showLoader();
-
         const transactionData = {
             user_id: state.currentUser.id,
             amount: parseFloat(document.getElementById('amount').value),
@@ -228,23 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
             notes: document.getElementById('notes').value,
             transaction_type: typeIncomeBtn.classList.contains('active') ? 'income' : 'expense',
         };
-
         try {
-            let response;
-            if (state.editingTransactionId) {
-                // The backend does not support PUT /transactions/:id, this will fail
-                response = await fetch(`${API_URL}/transactions/${state.editingTransactionId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(transactionData)
-                });
-            } else {
-                response = await fetch(`${API_URL}/transactions`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(transactionData)
-                });
-            }
+            const url = state.editingTransactionId ? `${API_URL}/transactions/${state.editingTransactionId}` : `${API_URL}/transactions`;
+            const method = state.editingTransactionId ? 'PUT' : 'POST';
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(transactionData)
+            });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || 'فشل حفظ العملية');
             await fetchTransactions();
@@ -262,9 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (item) {
             const transactionId = parseInt(item.dataset.id);
             const transaction = state.transactions.find(t => t.id === transactionId);
-            if (transaction) {
-                openTransactionModal(transaction);
-            }
+            if (transaction) openTransactionModal(transaction);
         }
     });
 
@@ -275,35 +227,20 @@ document.addEventListener('DOMContentLoaded', () => {
         showAuthScreen();
     });
 
-    showRegisterLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        loginForm.classList.add('hidden');
-        registerForm.classList.remove('hidden');
-    });
-    showLoginLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        registerForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-    });
+    showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); });
+    showLoginLink.addEventListener('click', (e) => { e.preventDefault(); registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
 
     addTransactionBtn.addEventListener('click', () => openTransactionModal());
     cancelBtn.addEventListener('click', closeTransactionModal);
     closeModalBtn.addEventListener('click', closeTransactionModal);
 
-    typeIncomeBtn.addEventListener('click', () => {
-        typeIncomeBtn.classList.add('active');
-        typeExpenseBtn.classList.remove('active');
-    });
-    typeExpenseBtn.addEventListener('click', () => {
-        typeExpenseBtn.classList.add('active');
-        typeIncomeBtn.classList.remove('active');
-    });
+    typeIncomeBtn.addEventListener('click', () => { typeIncomeBtn.classList.add('active'); typeExpenseBtn.classList.remove('active'); });
+    typeExpenseBtn.addEventListener('click', () => { typeExpenseBtn.classList.add('active'); typeIncomeBtn.classList.remove('active'); });
 
     deleteBtn.addEventListener('click', async () => {
        if (state.editingTransactionId && confirm('هل أنت متأكد من حذف هذه العملية؟')) {
            showLoader();
            try {
-                // The backend does not support DELETE /transactions/:id, this will fail
                 const response = await fetch(`${API_URL}/transactions/${state.editingTransactionId}`, { method: 'DELETE' });
                 if (!response.ok) throw new Error('فشل الحذف');
                 await fetchTransactions();
